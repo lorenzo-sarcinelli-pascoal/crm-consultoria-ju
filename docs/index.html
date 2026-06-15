@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRM Consultoria Ju</title>
+  <meta name="theme-color" content="#0F172A" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="icons/the-icon.svg" />
+  <style>
+    :root {
+      --major-01: #D9C8B7;
+      --major-02: #0F172A;
+      --surface-01: #12131F;
+      --surface-02: #151B2E;
+      --border: #222433;
+      --muted: #8E92AD;
+      --accent-02: #1796D4;
+      --accent-03: #62C0EE;
+      --accent-04: #FFC30F;
+      --success: #58D417;
+      --danger: #FC7148;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Plus Jakarta Sans", Inter, system-ui, sans-serif; background: var(--major-02); color: var(--major-01); line-height: 1.5; min-height: 100vh; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; border: none; border-radius: 8px; padding: 8px 14px; background: var(--accent-02); color: #fff; font-weight: 600; font-size: 13px; }
+    button:hover { filter: brightness(1.08); }
+    button.secondary { background: var(--surface-02); color: var(--major-01); border: 1px solid var(--border); }
+    button.ghost { background: transparent; color: var(--accent-03); border: 1px solid var(--border); }
+    button.danger { background: var(--danger); }
+    input, select, textarea { background: var(--surface-01); border: 1px solid var(--border); color: var(--major-01); border-radius: 8px; padding: 8px 10px; width: 100%; font-size: 13px; }
+    textarea { min-height: 80px; resize: vertical; }
+    label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .06em; }
+
+    .header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; padding: 16px 18px; background: var(--surface-01); border: 1px solid var(--border); border-radius: 12px; }
+    .header h1 { font-size: 22px; margin-bottom: 4px; }
+    .header small { color: var(--muted); font-size: 12px; }
+    .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .config-panel { background: var(--surface-01); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 20px; overflow: hidden; }
+    .config-panel:not(.open) .config-body { display: none; }
+    .config-toggle { width: 100%; text-align: left; padding: 12px 16px; background: var(--surface-02); color: var(--major-01); border-radius: 0; font-size: 13px; }
+    .config-body { padding: 16px; display: grid; gap: 14px; }
+    .config-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .config-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 16px; }
+    .kpi { background: var(--surface-01); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+    .kpi .label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; }
+    .kpi .val { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 4px; }
+
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; padding: 12px; background: var(--surface-01); border: 1px solid var(--border); border-radius: 10px; }
+    .toolbar input[type="search"] { max-width: 260px; flex: 1; min-width: 180px; }
+    .toolbar select { max-width: 180px; width: auto; }
+    .view-toggle { display: flex; gap: 4px; margin-left: auto; }
+    .view-toggle button.active { background: var(--accent-04); color: var(--major-02); }
+
+    .status-badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .status-Nova { background: rgba(98,192,238,.2); color: var(--accent-03); }
+    .status-Contactada { background: rgba(255,195,15,.2); color: var(--accent-04); }
+    .status-Em-conversa { background: rgba(23,150,212,.25); color: var(--accent-02); }
+    .status-Aprovada { background: rgba(88,212,23,.2); color: var(--success); }
+    .status-Recusada { background: rgba(252,113,72,.2); color: var(--danger); }
+    .status-Lista-de-espera { background: rgba(142,146,173,.25); color: var(--muted); }
+
+    .list-table { width: 100%; border-collapse: collapse; background: var(--surface-01); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .list-table th, .list-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
+    .list-table th { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); background: var(--surface-02); }
+    .list-table tr { cursor: pointer; }
+    .list-table tbody tr:hover { background: rgba(23,150,212,.06); }
+    .list-table .name { font-weight: 600; }
+    .list-table .muted { color: var(--muted); font-size: 12px; }
+
+    .kanban { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; align-items: start; }
+    .kanban-col { background: var(--surface-01); border: 1px solid var(--border); border-radius: 10px; min-height: 120px; }
+    .kanban-col-head { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; }
+    .kanban-col-body { padding: 8px; display: flex; flex-direction: column; gap: 8px; min-height: 80px; }
+    .kanban-card { background: var(--surface-02); border: 1px solid var(--border); border-radius: 8px; padding: 10px; cursor: grab; font-size: 12px; }
+    .kanban-card:active { cursor: grabbing; }
+    .kanban-card .card-name { font-weight: 700; margin-bottom: 4px; }
+    .kanban-card .card-meta { color: var(--muted); font-size: 11px; }
+    .kanban-col-body.drag-over { background: rgba(23,150,212,.08); outline: 2px dashed var(--accent-02); outline-offset: -4px; }
+
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 50; display: none; }
+    .drawer-overlay.open { display: block; }
+    .drawer { position: fixed; top: 0; right: 0; width: min(480px, 100vw); height: 100vh; background: var(--surface-01); border-left: 1px solid var(--border); z-index: 60; transform: translateX(100%); transition: transform .2s ease; overflow-y: auto; padding: 20px; }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 16px; }
+    .drawer-head h2 { font-size: 18px; line-height: 1.3; }
+    .drawer-section { margin-bottom: 16px; }
+    .drawer-section h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 8px; }
+    .field-grid { display: grid; gap: 10px; }
+    .qa-item { margin-bottom: 10px; }
+    .qa-item .q { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+    .qa-item .a { font-size: 13px; }
+    .drawer-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+    .toast { position: fixed; bottom: 20px; right: 20px; z-index: 100; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; opacity: 0; transform: translateY(8px); transition: all .2s; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.ok { background: var(--success); color: var(--major-02); }
+    .toast.err { background: var(--danger); color: #fff; }
+
+    .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+    .loading { text-align: center; padding: 40px; color: var(--muted); }
+
+    @media (max-width: 768px) {
+      .list-table { display: block; overflow-x: auto; }
+      .view-toggle { margin-left: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header class="header">
+    <div>
+      <h1>CRM Consultoria Ju</h1>
+      <small>Candidatas · formulário Google · <span id="lastSync">—</span></small>
+    </div>
+    <div class="header-actions">
+      <button class="secondary" id="btnRefresh">Atualizar</button>
+      <button class="ghost" id="btnConfig">Configuração</button>
+    </div>
+  </header>
+
+  <div class="config-panel" id="configPanel">
+    <button class="config-toggle" id="configToggle">▼ Configuração (Google Sheets + Apps Script)</button>
+    <div class="config-body">
+      <div class="config-row">
+        <div><label>API Key (Google Sheets)</label><input type="password" id="cfgApiKey" placeholder="AIzaSy..." /></div>
+        <div><label>Spreadsheet ID</label><input type="text" id="cfgSheetId" value="1tE9hSzTUJZfFtnUs-j3dNn9WhRjam1guqTVCgcMGjMI" /></div>
+        <div><label>Nome da aba</label><input type="text" id="cfgSheetName" value="Form Responses 1" /></div>
+      </div>
+      <div class="config-row">
+        <div><label>URL do Apps Script (Web App)</label><input type="url" id="cfgScriptUrl" value="https://script.google.com/macros/s/AKfycbxCNv4zVCg6YW1J8lKh4LkR94FCQwc8UB1tIOcLMhBTnkehfHUp7nRxu80ctwq1EUmu/exec" placeholder="https://script.google.com/macros/s/.../exec" /></div>
+        <div><label>PIN de escrita</label><input type="password" id="cfgPin" placeholder="PIN definido no Apps Script" /></div>
+      </div>
+      <div class="config-actions">
+        <button id="btnSaveConfig">Salvar configuração</button>
+        <button class="secondary" id="btnLoad">Carregar leads</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="toolbar">
+    <input type="search" id="searchInput" placeholder="Buscar nome, e-mail ou WhatsApp..." />
+    <select id="filterStatus"><option value="">Todos os status</option></select>
+    <select id="filterNotificado">
+      <option value="">Notificado: todos</option>
+      <option value="yes">Sim</option>
+      <option value="no">Não</option>
+    </select>
+    <div class="view-toggle">
+      <button class="secondary active" data-view="list" id="btnViewList">Lista</button>
+      <button class="secondary" data-view="kanban" id="btnViewKanban">Kanban</button>
+    </div>
+  </div>
+
+  <div id="mainContent"><div class="empty">Configure a API Key e clique em <strong>Carregar leads</strong>.</div></div>
+</div>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div>
+      <h2 id="drawerName">—</h2>
+      <small class="muted" id="drawerMeta">—</small>
+    </div>
+    <button class="secondary" id="btnCloseDrawer">✕</button>
+  </div>
+  <div id="drawerBody"></div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STATUSES = ['Nova', 'Contactada', 'Em conversa', 'Aprovada', 'Recusada', 'Lista de espera'];
+const CONFIG_KEY = 'the_crm_consultoria_ju_config';
+
+const FORM_FIELDS = [
+  { key: 'timestamp', label: 'Data da candidatura' },
+  { key: 'nome', label: 'Nome completo' },
+  { key: 'whatsapp', label: 'WhatsApp' },
+  { key: 'email', label: 'E-mail' },
+  { key: 'situacao', label: 'Situação da casa' },
+  { key: 'areas', label: 'Áreas que incomodam' },
+  { key: 'tentou', label: 'Já tentou organizar antes?' },
+  { key: 'impede', label: 'O que impede de organizar' },
+  { key: 'moraCom', label: 'Quem mora com você' },
+  { key: 'disponibilidade', label: 'Disponibilidade para encontros' },
+  { key: 'expectativa', label: 'Expectativa com a consultoria' },
+  { key: 'comprometimento', label: 'Comprometimento com tarefas' },
+  { key: 'notificado', label: 'Notificado' }
+];
+
+let leads = [];
+let filtered = [];
+let currentView = 'list';
+let selectedLead = null;
+let dragLeadRow = null;
+
+function getConfig() {
+  try { return JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}'); }
+  catch { return {}; }
+}
+
+function saveConfigFromUI() {
+  const cfg = {
+    apiKey: document.getElementById('cfgApiKey').value.trim(),
+    sheetId: document.getElementById('cfgSheetId').value.trim(),
+    sheetName: document.getElementById('cfgSheetName').value.trim(),
+    scriptUrl: document.getElementById('cfgScriptUrl').value.trim(),
+    pin: document.getElementById('cfgPin').value.trim()
+  };
+  localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
+  toast('Configuração salva', 'ok');
+}
+
+function loadConfigToUI() {
+  const cfg = getConfig();
+  if (cfg.apiKey) document.getElementById('cfgApiKey').value = cfg.apiKey;
+  if (cfg.sheetId) document.getElementById('cfgSheetId').value = cfg.sheetId;
+  if (cfg.sheetName) document.getElementById('cfgSheetName').value = cfg.sheetName;
+  if (cfg.scriptUrl) document.getElementById('cfgScriptUrl').value = cfg.scriptUrl;
+  if (cfg.pin) document.getElementById('cfgPin').value = cfg.pin;
+}
+
+function toast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + (type || 'ok');
+  setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+function statusClass(s) {
+  return 'status-' + String(s || 'Nova').replace(/\s+/g, '-');
+}
+
+function parseTimestamp(v) {
+  if (!v) return null;
+  const s = String(v).trim();
+  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return new Date(+m[3], +m[1] - 1, +m[2]);
+  const d = new Date(s);
+  return isNaN(d) ? null : d;
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+function whatsappUrl(raw) {
+  const digits = String(raw || '').replace(/\D/g, '');
+  if (!digits) return null;
+  const phone = digits.startsWith('55') ? digits : '55' + digits;
+  return 'https://wa.me/' + phone;
+}
+
+function normalizeHeader(h) {
+  return String(h || '').trim().toLowerCase();
+}
+
+function mapRow(row, sheetRow) {
+  const h = row._headers || [];
+  function col(matchers) {
+    for (let i = 0; i < h.length; i++) {
+      const nh = normalizeHeader(h[i]);
+      if (matchers.some(m => nh.includes(m))) return row._cells[i] ?? '';
+    }
+    return '';
+  }
+  const statusRaw = col(['status crm']) || (row._cells[13] ?? '');
+  return {
+    row: sheetRow,
+    timestamp: col(['timestamp']) || row._cells[0] || '',
+    date: parseTimestamp(col(['timestamp']) || row._cells[0]),
+    nome: col(['nome completo', 'seu nome']) || row._cells[1] || '',
+    whatsapp: col(['whatsapp']) || row._cells[2] || '',
+    email: col(['e-mail', 'email']) || row._cells[3] || '',
+    situacao: col(['situação da casa', 'situacao da casa']) || row._cells[4] || '',
+    areas: col(['áreas da casa', 'areas da casa']) || row._cells[5] || '',
+    tentou: col(['tentou organizar']) || row._cells[6] || '',
+    impede: col(['impede de organizar']) || row._cells[7] || '',
+    moraCom: col(['mora com']) || row._cells[8] || '',
+    disponibilidade: col(['disponibilidade']) || row._cells[9] || '',
+    expectativa: col(['espera que mude']) || row._cells[10] || '',
+    comprometimento: col(['processo']) || row._cells[11] || '',
+    notificado: col(['notificado']) || row._cells[12] || '',
+    status: statusRaw.trim() || 'Nova',
+    notas: col(['notas']) || row._cells[14] || '',
+    proximoPasso: col(['próximo passo', 'proximo passo']) || row._cells[15] || '',
+    atualizadoEm: col(['atualizado em']) || row._cells[16] || ''
+  };
+}
+
+async function fetchSheet() {
+  const cfg = getConfig();
+  if (!cfg.apiKey || !cfg.sheetId || !cfg.sheetName) {
+    throw new Error('Configure API Key, Spreadsheet ID e nome da aba.');
+  }
+  const range = encodeURIComponent(cfg.sheetName);
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${range}?key=${cfg.apiKey}&valueRenderOption=FORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING`;
+  const resp = await fetch(url);
+  if (!resp.ok) {
+    const body = await resp.text();
+    throw new Error(`Sheets API ${resp.status}: ${body.slice(0, 180)}`);
+  }
+  const data = await resp.json();
+  const rows = data.values || [];
+  if (rows.length < 2) return [];
+  const headers = rows[0];
+  return rows.slice(1)
+    .map((cells, i) => {
+      const obj = { _headers: headers, _cells: cells };
+      return mapRow(obj, i + 2);
+    })
+    .filter(l => l.nome || l.email || l.whatsapp)
+    .sort((a, b) => (b.date?.getTime() || 0) - (a.date?.getTime() || 0));
+}
+
+async function saveLead(row, patch) {
+  const cfg = getConfig();
+  if (!cfg.scriptUrl || !cfg.pin) throw new Error('Configure URL do Apps Script e PIN.');
+  const payload = { pin: cfg.pin, row, ...patch };
+  const resp = await fetch(cfg.scriptUrl, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  });
+  const text = await resp.text();
+  let data;
+  try { data = JSON.parse(text); } catch { throw new Error('Resposta inválida do Apps Script'); }
+  if (!data.ok) throw new Error(data.error || 'Erro ao salvar');
+  return data;
+}
+
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const st = document.getElementById('filterStatus').value;
+  const not = document.getElementById('filterNotificado').value;
+  filtered = leads.filter(l => {
+    if (st && l.status !== st) return false;
+    if (not === 'yes' && !/^yes|sim/i.test(String(l.notificado))) return false;
+    if (not === 'no' && /^yes|sim/i.test(String(l.notificado))) return false;
+    if (!q) return true;
+    const hay = [l.nome, l.email, l.whatsapp].join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+}
+
+function renderKpis() {
+  const now = new Date();
+  const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 7);
+  const novas = leads.filter(l => l.status === 'Nova').length;
+  const semana = leads.filter(l => l.date && l.date >= weekAgo).length;
+  const aprovadas = leads.filter(l => l.status === 'Aprovada').length;
+  document.getElementById('kpis').innerHTML = [
+    { label: 'Total', val: leads.length },
+    { label: 'Novas', val: novas },
+    { label: 'Esta semana', val: semana },
+    { label: 'Aprovadas', val: aprovadas },
+    { label: 'Em conversa', val: leads.filter(l => l.status === 'Em conversa').length }
+  ].map(k => `<div class="kpi"><div class="label">${k.label}</div><div class="val">${k.val}</div></div>`).join('');
+}
+
+function renderList() {
+  if (!filtered.length) {
+    document.getElementById('mainContent').innerHTML = '<div class="empty">Nenhuma candidata encontrada.</div>';
+    return;
+  }
+  const rows = filtered.map(l => `
+    <tr data-row="${l.row}">
+      <td><span class="name">${esc(l.nome)}</span><div class="muted">${formatDate(l.date)}</div></td>
+      <td><span class="status-badge ${statusClass(l.status)}">${esc(l.status)}</span></td>
+      <td class="muted">${esc(l.disponibilidade).slice(0, 40)}${l.disponibilidade.length > 40 ? '…' : ''}</td>
+      <td class="muted">${esc(l.comprometimento).slice(0, 36)}${l.comprometimento.length > 36 ? '…' : ''}</td>
+      <td>${/^yes|sim/i.test(l.notificado) ? '✓' : '—'}</td>
+    </tr>
+  `).join('');
+  document.getElementById('mainContent').innerHTML = `
+    <table class="list-table">
+      <thead><tr><th>Candidata</th><th>Status</th><th>Disponibilidade</th><th>Comprometimento</th><th>Notif.</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  document.querySelectorAll('.list-table tbody tr').forEach(tr => {
+    tr.addEventListener('click', () => openDrawer(+tr.dataset.row));
+  });
+}
+
+function renderKanban() {
+  const cols = STATUSES.map(status => {
+    const items = filtered.filter(l => l.status === status);
+    const cards = items.map(l => `
+      <div class="kanban-card" draggable="true" data-row="${l.row}">
+        <div class="card-name">${esc(l.nome)}</div>
+        <div class="card-meta">${formatDate(l.date)} · ${esc(l.disponibilidade).slice(0, 28)}</div>
+      </div>
+    `).join('');
+    return `
+      <div class="kanban-col" data-status="${esc(status)}">
+        <div class="kanban-col-head"><span>${status}</span><span>${items.length}</span></div>
+        <div class="kanban-col-body">${cards || '<div class="muted" style="font-size:11px;padding:4px">Vazio</div>'}</div>
+      </div>`;
+  }).join('');
+  document.getElementById('mainContent').innerHTML = `<div class="kanban">${cols}</div>`;
+
+  document.querySelectorAll('.kanban-card').forEach(card => {
+    card.addEventListener('dragstart', e => { dragLeadRow = +card.dataset.row; e.dataTransfer.effectAllowed = 'move'; });
+    card.addEventListener('click', () => openDrawer(+card.dataset.row));
+  });
+  document.querySelectorAll('.kanban-col-body').forEach(body => {
+    body.addEventListener('dragover', e => { e.preventDefault(); body.classList.add('drag-over'); });
+    body.addEventListener('dragleave', () => body.classList.remove('drag-over'));
+    body.addEventListener('drop', async e => {
+      e.preventDefault();
+      body.classList.remove('drag-over');
+      const status = body.closest('.kanban-col').dataset.status;
+      if (!dragLeadRow || !status) return;
+      await updateLeadStatus(dragLeadRow, status);
+      dragLeadRow = null;
+    });
+  });
+}
+
+function render() {
+  applyFilters();
+  renderKpis();
+  if (currentView === 'kanban') renderKanban();
+  else renderList();
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function updateLeadStatus(row, status) {
+  const lead = leads.find(l => l.row === row);
+  if (!lead) return;
+  const prev = lead.status;
+  lead.status = status;
+  render();
+  try {
+    await saveLead(row, { status });
+    lead.atualizadoEm = new Date().toLocaleString('pt-BR');
+    toast('Status atualizado', 'ok');
+  } catch (err) {
+    lead.status = prev;
+    render();
+    toast(err.message, 'err');
+  }
+}
+
+function openDrawer(row) {
+  selectedLead = leads.find(l => l.row === row);
+  if (!selectedLead) return;
+  const l = selectedLead;
+  document.getElementById('drawerName').textContent = l.nome || 'Sem nome';
+  document.getElementById('drawerMeta').textContent = [l.email, l.whatsapp].filter(Boolean).join(' · ');
+  const wa = whatsappUrl(l.whatsapp);
+  const qa = FORM_FIELDS.filter(f => !['timestamp','nome','whatsapp','email'].includes(f.key))
+    .map(f => `<div class="qa-item"><div class="q">${esc(f.label)}</div><div class="a">${esc(l[f.key]) || '—'}</div></div>`).join('');
+  document.getElementById('drawerBody').innerHTML = `
+    <div class="drawer-section">
+      <span class="status-badge ${statusClass(l.status)}">${esc(l.status)}</span>
+      <span class="muted" style="font-size:12px;margin-left:8px">${formatDate(l.date)}</span>
+    </div>
+    <div class="drawer-section field-grid">
+      <div><label>Status CRM</label>
+        <select id="editStatus">${STATUSES.map(s => `<option value="${esc(s)}"${s===l.status?' selected':''}>${esc(s)}</option>`).join('')}</select>
+      </div>
+      <div><label>Notas</label><textarea id="editNotas">${esc(l.notas)}</textarea></div>
+      <div><label>Próximo passo</label><input type="text" id="editPasso" value="${esc(l.proximoPasso)}" /></div>
+    </div>
+    <div class="drawer-section"><h3>Respostas do formulário</h3>${qa}</div>
+    <div class="drawer-actions">
+      <button id="btnSaveLead">Salvar</button>
+      ${wa ? `<a href="${wa}" target="_blank" rel="noopener"><button class="secondary" type="button">WhatsApp</button></a>` : ''}
+      <button class="secondary" id="btnCopyEmail">Copiar e-mail</button>
+      <button class="ghost" id="btnMarkContactada">Marcar contactada</button>
+    </div>`;
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('btnSaveLead').onclick = () => saveDrawer();
+  document.getElementById('btnCopyEmail').onclick = () => { navigator.clipboard.writeText(l.email); toast('E-mail copiado', 'ok'); };
+  document.getElementById('btnMarkContactada').onclick = () => { document.getElementById('editStatus').value = 'Contactada'; saveDrawer(); };
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+  selectedLead = null;
+}
+
+async function saveDrawer() {
+  if (!selectedLead) return;
+  const status = document.getElementById('editStatus').value;
+  const notas = document.getElementById('editNotas').value;
+  const proximoPasso = document.getElementById('editPasso').value;
+  try {
+    await saveLead(selectedLead.row, { status, notas, proximoPasso });
+    Object.assign(selectedLead, { status, notas, proximoPasso, atualizadoEm: new Date().toLocaleString('pt-BR') });
+    render();
+    toast('Salvo na planilha', 'ok');
+  } catch (err) {
+    toast(err.message, 'err');
+  }
+}
+
+async function loadLeads() {
+  document.getElementById('mainContent').innerHTML = '<div class="loading">Carregando...</div>';
+  try {
+    leads = await fetchSheet();
+    document.getElementById('lastSync').textContent = 'Atualizado ' + new Date().toLocaleString('pt-BR');
+    render();
+    toast(`${leads.length} leads carregados`, 'ok');
+  } catch (err) {
+    document.getElementById('mainContent').innerHTML = `<div class="empty">${esc(err.message)}</div>`;
+    toast(err.message, 'err');
+  }
+}
+
+function initStatusFilter() {
+  const sel = document.getElementById('filterStatus');
+  STATUSES.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s; o.textContent = s;
+    sel.appendChild(o);
+  });
+}
+
+document.getElementById('btnSaveConfig').addEventListener('click', saveConfigFromUI);
+document.getElementById('btnLoad').addEventListener('click', loadLeads);
+document.getElementById('btnRefresh').addEventListener('click', loadLeads);
+document.getElementById('btnConfig').addEventListener('click', () => {
+  document.getElementById('configPanel').classList.toggle('open');
+});
+document.getElementById('configToggle').addEventListener('click', () => {
+  document.getElementById('configPanel').classList.toggle('open');
+});
+document.getElementById('searchInput').addEventListener('input', render);
+document.getElementById('filterStatus').addEventListener('change', render);
+document.getElementById('filterNotificado').addEventListener('change', render);
+document.getElementById('btnCloseDrawer').addEventListener('click', closeDrawer);
+document.getElementById('drawerOverlay').addEventListener('click', closeDrawer);
+
+document.querySelectorAll('.view-toggle button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentView = btn.dataset.view;
+    render();
+  });
+});
+
+initStatusFilter();
+loadConfigToUI();
+</script>
+</body>
+</html>
