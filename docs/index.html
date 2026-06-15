@@ -4,106 +4,143 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CRM Consultoria Ju</title>
-  <meta name="theme-color" content="#0F172A" />
+  <meta name="theme-color" content="#F6F4F1" />
   <meta name="robots" content="noindex, nofollow" />
   <link rel="icon" type="image/svg+xml" href="icons/the-icon.svg" />
   <style>
     :root {
-      --major-01: #D9C8B7;
-      --major-02: #0F172A;
-      --surface-01: #12131F;
-      --surface-02: #151B2E;
-      --border: #222433;
-      --muted: #8E92AD;
-      --accent-02: #1796D4;
-      --accent-03: #62C0EE;
-      --accent-04: #FFC30F;
-      --success: #58D417;
-      --danger: #FC7148;
+      --bg: #F6F4F1;
+      --surface: #FFFFFF;
+      --surface-soft: #FAFAF8;
+      --text: #2C3345;
+      --text-muted: #6B7280;
+      --border: #E8E4DE;
+      --border-strong: #D4CEC4;
+      --accent: #1796D4;
+      --accent-soft: #E8F4FC;
+      --accent-hover: #1280B8;
+      --warm: #C4956A;
+      --warm-soft: #FDF6EE;
+      --warm-border: #E8C9A8;
+      --success: #2D9B4E;
+      --success-soft: #EAF7EE;
+      --danger: #D94F30;
+      --danger-soft: #FDEEEA;
+      --warning-soft: #FFF8E6;
+      --shadow: 0 1px 3px rgba(44, 51, 69, .06);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: "Plus Jakarta Sans", Inter, system-ui, sans-serif; background: var(--major-02); color: var(--major-01); line-height: 1.5; min-height: 100vh; }
+    body { font-family: "Plus Jakarta Sans", Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; }
     .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
     button, input, select, textarea { font: inherit; }
-    button { cursor: pointer; border: none; border-radius: 8px; padding: 8px 14px; background: var(--accent-02); color: #fff; font-weight: 600; font-size: 13px; }
-    button:hover { filter: brightness(1.08); }
-    button.secondary { background: var(--surface-02); color: var(--major-01); border: 1px solid var(--border); }
-    button.ghost { background: transparent; color: var(--accent-03); border: 1px solid var(--border); }
+    button { cursor: pointer; border: none; border-radius: 8px; padding: 8px 14px; background: var(--accent); color: #fff; font-weight: 600; font-size: 13px; transition: background .15s; }
+    button:hover { background: var(--accent-hover); }
+    button.secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); box-shadow: var(--shadow); }
+    button.secondary:hover { background: var(--surface-soft); filter: none; }
+    button.ghost { background: transparent; color: var(--accent); border: 1px solid var(--border-strong); }
+    button.ghost:hover { background: var(--accent-soft); filter: none; }
     button.danger { background: var(--danger); }
-    input, select, textarea { background: var(--surface-01); border: 1px solid var(--border); color: var(--major-01); border-radius: 8px; padding: 8px 10px; width: 100%; font-size: 13px; }
+    input, select, textarea { background: var(--surface); border: 1px solid var(--border-strong); color: var(--text); border-radius: 8px; padding: 8px 10px; width: 100%; font-size: 13px; }
+    input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
     textarea { min-height: 80px; resize: vertical; }
-    label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .06em; }
+    label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .06em; }
+    .muted { color: var(--text-muted); }
 
-    .header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; padding: 16px 18px; background: var(--surface-01); border: 1px solid var(--border); border-radius: 12px; }
-    .header h1 { font-size: 22px; margin-bottom: 4px; }
-    .header small { color: var(--muted); font-size: 12px; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+    .header h1 { font-size: 22px; margin-bottom: 4px; color: var(--text); }
+    .header small { color: var(--text-muted); font-size: 12px; }
     .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-    .config-panel { background: var(--surface-01); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 20px; overflow: hidden; }
+    .config-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: var(--shadow); }
     .config-panel:not(.open) .config-body { display: none; }
-    .config-toggle { width: 100%; text-align: left; padding: 12px 16px; background: var(--surface-02); color: var(--major-01); border-radius: 0; font-size: 13px; }
+    .config-toggle { width: 100%; text-align: left; padding: 12px 16px; background: var(--surface-soft); color: var(--text); border-radius: 0; font-size: 13px; border-bottom: 1px solid var(--border); }
+    .config-toggle:hover { background: var(--accent-soft); filter: none; }
     .config-body { padding: 16px; display: grid; gap: 14px; }
     .config-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
     .config-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
     .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 16px; }
-    .kpi { background: var(--surface-01); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
-    .kpi .label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; }
-    .kpi .val { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 4px; }
+    .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow); }
+    .kpi .label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); font-weight: 700; }
+    .kpi .val { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 4px; color: var(--text); }
+    .kpi-warn .val { color: #9A5B00; }
 
-    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; padding: 12px; background: var(--surface-01); border: 1px solid var(--border); border-radius: 10px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); }
     .toolbar input[type="search"] { max-width: 260px; flex: 1; min-width: 180px; }
     .toolbar select { max-width: 180px; width: auto; }
     .view-toggle { display: flex; gap: 4px; margin-left: auto; }
-    .view-toggle button.active { background: var(--accent-04); color: var(--major-02); }
+    .view-toggle button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
     .status-badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; }
-    .status-Nova { background: rgba(98,192,238,.2); color: var(--accent-03); }
-    .status-Contactada { background: rgba(255,195,15,.2); color: var(--accent-04); }
-    .status-Em-conversa { background: rgba(23,150,212,.25); color: var(--accent-02); }
-    .status-Aprovada { background: rgba(88,212,23,.2); color: var(--success); }
-    .status-Recusada { background: rgba(252,113,72,.2); color: var(--danger); }
-    .status-Lista-de-espera { background: rgba(142,146,173,.25); color: var(--muted); }
+    .status-Nova { background: var(--accent-soft); color: var(--accent); }
+    .status-Contactada { background: var(--warning-soft); color: #9A7200; }
+    .status-Em-conversa { background: #EEF2FF; color: #4F46E5; }
+    .status-Aprovada { background: var(--success-soft); color: var(--success); }
+    .status-Recusada { background: var(--danger-soft); color: var(--danger); }
+    .status-Lista-de-espera { background: #F3F4F6; color: var(--text-muted); }
 
-    .list-table { width: 100%; border-collapse: collapse; background: var(--surface-01); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-    .list-table th, .list-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
-    .list-table th { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); background: var(--surface-02); }
+    .list-table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: var(--shadow); }
+    .list-table th, .list-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+    .list-table th { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); background: var(--surface-soft); }
     .list-table tr { cursor: pointer; }
-    .list-table tbody tr:hover { background: rgba(23,150,212,.06); }
+    .list-table tbody tr:hover { background: var(--accent-soft); }
+    .list-table tbody tr.stale-nova { background: var(--warm-soft); box-shadow: inset 3px 0 0 var(--warm); }
+    .list-table tbody tr.stale-nova:hover { background: #FBF0E4; }
     .list-table .name { font-weight: 600; }
-    .list-table .muted { color: var(--muted); font-size: 12px; }
+    .list-table .muted { color: var(--text-muted); font-size: 12px; }
+    .list-actions { display: flex; gap: 6px; align-items: center; }
 
     .kanban { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; align-items: start; }
-    .kanban-col { background: var(--surface-01); border: 1px solid var(--border); border-radius: 10px; min-height: 120px; }
-    .kanban-col-head { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; }
+    .kanban-col { background: var(--surface-soft); border: 1px solid var(--border); border-radius: 10px; min-height: 120px; }
+    .kanban-col-head { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; color: var(--text); background: var(--surface); border-radius: 10px 10px 0 0; }
     .kanban-col-body { padding: 8px; display: flex; flex-direction: column; gap: 8px; min-height: 80px; }
-    .kanban-card { background: var(--surface-02); border: 1px solid var(--border); border-radius: 8px; padding: 10px; cursor: grab; font-size: 12px; }
+    .kanban-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px; cursor: grab; font-size: 12px; box-shadow: var(--shadow); transition: box-shadow .15s, border-color .15s; }
+    .kanban-card:hover { box-shadow: 0 2px 8px rgba(44, 51, 69, .1); border-color: var(--border-strong); }
     .kanban-card:active { cursor: grabbing; }
-    .kanban-card .card-name { font-weight: 700; margin-bottom: 4px; }
-    .kanban-card .card-meta { color: var(--muted); font-size: 11px; }
-    .kanban-col-body.drag-over { background: rgba(23,150,212,.08); outline: 2px dashed var(--accent-02); outline-offset: -4px; }
+    .kanban-card.stale-nova { background: var(--warm-soft); border-color: var(--warm-border); box-shadow: inset 3px 0 0 var(--warm), var(--shadow); }
+    .kanban-card .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; margin-bottom: 4px; }
+    .kanban-card .card-name { font-weight: 700; flex: 1; min-width: 0; line-height: 1.3; }
+    .kanban-card .card-meta { color: var(--text-muted); font-size: 11px; }
+    .kanban-card .stale-tag { display: inline-block; margin-top: 6px; font-size: 10px; font-weight: 700; color: #9A5B00; background: #FFE8C2; padding: 2px 6px; border-radius: 4px; }
+    .kanban-col-body.drag-over { background: var(--accent-soft); outline: 2px dashed var(--accent); outline-offset: -4px; }
 
-    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 50; display: none; }
+    .btn-wa-mini {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: #25D366;
+      color: #fff;
+      text-decoration: none;
+      transition: transform .12s, filter .12s;
+    }
+    .btn-wa-mini:hover { filter: brightness(1.06); transform: scale(1.05); }
+    .btn-wa-mini svg { width: 16px; height: 16px; fill: currentColor; }
+
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(44, 51, 69, .35); z-index: 50; display: none; }
     .drawer-overlay.open { display: block; }
-    .drawer { position: fixed; top: 0; right: 0; width: min(480px, 100vw); height: 100vh; background: var(--surface-01); border-left: 1px solid var(--border); z-index: 60; transform: translateX(100%); transition: transform .2s ease; overflow-y: auto; padding: 20px; }
+    .drawer { position: fixed; top: 0; right: 0; width: min(480px, 100vw); height: 100vh; background: var(--surface); border-left: 1px solid var(--border); z-index: 60; transform: translateX(100%); transition: transform .2s ease; overflow-y: auto; padding: 20px; box-shadow: -4px 0 24px rgba(44, 51, 69, .08); }
     .drawer.open { transform: translateX(0); }
     .drawer-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 16px; }
-    .drawer-head h2 { font-size: 18px; line-height: 1.3; }
+    .drawer-head h2 { font-size: 18px; line-height: 1.3; color: var(--text); }
     .drawer-section { margin-bottom: 16px; }
-    .drawer-section h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 8px; }
+    .drawer-section h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 8px; }
     .field-grid { display: grid; gap: 10px; }
     .qa-item { margin-bottom: 10px; }
-    .qa-item .q { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
-    .qa-item .a { font-size: 13px; }
+    .qa-item .q { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+    .qa-item .a { font-size: 13px; color: var(--text); }
     .drawer-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
 
-    .toast { position: fixed; bottom: 20px; right: 20px; z-index: 100; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; opacity: 0; transform: translateY(8px); transition: all .2s; pointer-events: none; }
+    .toast { position: fixed; bottom: 20px; right: 20px; z-index: 100; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; opacity: 0; transform: translateY(8px); transition: all .2s; pointer-events: none; box-shadow: 0 4px 12px rgba(44, 51, 69, .15); }
     .toast.show { opacity: 1; transform: translateY(0); }
-    .toast.ok { background: var(--success); color: var(--major-02); }
+    .toast.ok { background: var(--success); color: #fff; }
     .toast.err { background: var(--danger); color: #fff; }
 
-    .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
-    .loading { text-align: center; padding: 40px; color: var(--muted); }
+    .empty { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+    .loading { text-align: center; padding: 40px; color: var(--text-muted); }
 
     @media (max-width: 768px) {
       .list-table { display: block; overflow-x: auto; }
@@ -155,8 +192,8 @@
       <option value="no">Não</option>
     </select>
     <div class="view-toggle">
-      <button class="secondary active" data-view="list" id="btnViewList">Lista</button>
-      <button class="secondary" data-view="kanban" id="btnViewKanban">Kanban</button>
+      <button class="secondary" data-view="list" id="btnViewList">Lista</button>
+      <button class="secondary active" data-view="kanban" id="btnViewKanban">Kanban</button>
     </div>
   </div>
 
@@ -199,7 +236,7 @@ const FORM_FIELDS = [
 
 let leads = [];
 let filtered = [];
-let currentView = 'list';
+let currentView = 'kanban';
 let selectedLead = null;
 let dragLeadRow = null;
 
@@ -259,6 +296,26 @@ function whatsappUrl(raw) {
   if (!digits) return null;
   const phone = digits.startsWith('55') ? digits : '55' + digits;
   return 'https://wa.me/' + phone;
+}
+
+const WA_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>';
+
+function waMiniButton(lead) {
+  const url = whatsappUrl(lead.whatsapp);
+  if (!url) return '';
+  return `<a class="btn-wa-mini" href="${url}" target="_blank" rel="noopener" title="WhatsApp ${esc(lead.nome)}" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()">${WA_ICON}</a>`;
+}
+
+function isStaleNova(lead) {
+  if (lead.status !== 'Nova' || !lead.date) return false;
+  const ms = Date.now() - lead.date.getTime();
+  return ms > 24 * 60 * 60 * 1000;
+}
+
+function staleNovaTag(lead) {
+  if (!isStaleNova(lead)) return '';
+  const days = Math.floor((Date.now() - lead.date.getTime()) / (24 * 60 * 60 * 1000));
+  return `<span class="stale-tag">Sem contacto · ${days}d</span>`;
 }
 
 function normalizeHeader(h) {
@@ -360,13 +417,15 @@ function renderKpis() {
   const novas = leads.filter(l => l.status === 'Nova').length;
   const semana = leads.filter(l => l.date && l.date >= weekAgo).length;
   const aprovadas = leads.filter(l => l.status === 'Aprovada').length;
+  const staleCount = leads.filter(isStaleNova).length;
   document.getElementById('kpis').innerHTML = [
     { label: 'Total', val: leads.length },
     { label: 'Novas', val: novas },
+    { label: 'Sem contacto +1d', val: staleCount, warn: staleCount > 0 },
     { label: 'Esta semana', val: semana },
     { label: 'Aprovadas', val: aprovadas },
     { label: 'Em conversa', val: leads.filter(l => l.status === 'Em conversa').length }
-  ].map(k => `<div class="kpi"><div class="label">${k.label}</div><div class="val">${k.val}</div></div>`).join('');
+  ].map(k => `<div class="kpi${k.warn ? ' kpi-warn' : ''}"><div class="label">${k.label}</div><div class="val">${k.val}</div></div>`).join('');
 }
 
 function renderList() {
@@ -375,17 +434,18 @@ function renderList() {
     return;
   }
   const rows = filtered.map(l => `
-    <tr data-row="${l.row}">
+    <tr data-row="${l.row}" class="${isStaleNova(l) ? 'stale-nova' : ''}">
       <td><span class="name">${esc(l.nome)}</span><div class="muted">${formatDate(l.date)}</div></td>
       <td><span class="status-badge ${statusClass(l.status)}">${esc(l.status)}</span></td>
       <td class="muted">${esc(l.disponibilidade).slice(0, 40)}${l.disponibilidade.length > 40 ? '…' : ''}</td>
       <td class="muted">${esc(l.comprometimento).slice(0, 36)}${l.comprometimento.length > 36 ? '…' : ''}</td>
       <td>${/^yes|sim/i.test(l.notificado) ? '✓' : '—'}</td>
+      <td class="list-actions">${waMiniButton(l)}</td>
     </tr>
   `).join('');
   document.getElementById('mainContent').innerHTML = `
     <table class="list-table">
-      <thead><tr><th>Candidata</th><th>Status</th><th>Disponibilidade</th><th>Comprometimento</th><th>Notif.</th></tr></thead>
+      <thead><tr><th>Candidata</th><th>Status</th><th>Disponibilidade</th><th>Comprometimento</th><th>Notif.</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
   document.querySelectorAll('.list-table tbody tr').forEach(tr => {
@@ -397,9 +457,13 @@ function renderKanban() {
   const cols = STATUSES.map(status => {
     const items = filtered.filter(l => l.status === status);
     const cards = items.map(l => `
-      <div class="kanban-card" draggable="true" data-row="${l.row}">
-        <div class="card-name">${esc(l.nome)}</div>
+      <div class="kanban-card${isStaleNova(l) ? ' stale-nova' : ''}" draggable="true" data-row="${l.row}">
+        <div class="card-top">
+          <div class="card-name">${esc(l.nome)}</div>
+          ${waMiniButton(l)}
+        </div>
         <div class="card-meta">${formatDate(l.date)} · ${esc(l.disponibilidade).slice(0, 28)}</div>
+        ${staleNovaTag(l)}
       </div>
     `).join('');
     return `
