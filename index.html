@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRM Consultoria Ju</title>
+  <meta name="theme-color" content="#F6F4F1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="icons/the-icon.svg" />
+  <style>
+    :root {
+      --bg: #F6F4F1;
+      --surface: #FFFFFF;
+      --surface-soft: #FAFAF8;
+      --text: #2C3345;
+      --text-muted: #6B7280;
+      --border: #E8E4DE;
+      --border-strong: #D4CEC4;
+      --accent: #1796D4;
+      --accent-soft: #E8F4FC;
+      --accent-hover: #1280B8;
+      --warm: #C4956A;
+      --warm-soft: #FDF6EE;
+      --warm-border: #E8C9A8;
+      --success: #2D9B4E;
+      --success-soft: #EAF7EE;
+      --danger: #D94F30;
+      --danger-soft: #FDEEEA;
+      --warning-soft: #FFF8E6;
+      --shadow: 0 1px 3px rgba(44, 51, 69, .06);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Plus Jakarta Sans", Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; border: none; border-radius: 8px; padding: 8px 14px; background: var(--accent); color: #fff; font-weight: 600; font-size: 13px; transition: background .15s; }
+    button:hover { background: var(--accent-hover); }
+    button.secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); box-shadow: var(--shadow); }
+    button.secondary:hover { background: var(--surface-soft); filter: none; }
+    button.ghost { background: transparent; color: var(--accent); border: 1px solid var(--border-strong); }
+    button.ghost:hover { background: var(--accent-soft); filter: none; }
+    button.danger { background: var(--danger); }
+    input, select, textarea { background: var(--surface); border: 1px solid var(--border-strong); color: var(--text); border-radius: 8px; padding: 8px 10px; width: 100%; font-size: 13px; }
+    input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+    textarea { min-height: 80px; resize: vertical; }
+    label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .06em; }
+    .muted { color: var(--text-muted); }
+
+    .header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+    .header h1 { font-size: 22px; margin-bottom: 4px; color: var(--text); }
+    .header small { color: var(--text-muted); font-size: 12px; }
+    .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .config-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: var(--shadow); }
+    .config-panel:not(.open) .config-body { display: none; }
+    .config-toggle { width: 100%; text-align: left; padding: 12px 16px; background: var(--surface-soft); color: var(--text); border-radius: 0; font-size: 13px; border-bottom: 1px solid var(--border); }
+    .config-toggle:hover { background: var(--accent-soft); filter: none; }
+    .config-body { padding: 16px; display: grid; gap: 14px; }
+    .config-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .config-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 16px; }
+    .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow); }
+    .kpi .label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); font-weight: 700; }
+    .kpi .val { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 4px; color: var(--text); }
+    .kpi-warn .val { color: #9A5B00; }
+
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); }
+    .toolbar-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; flex: 1; min-width: 0; }
+    .toolbar.filters-hidden .toolbar-filters { display: none; }
+    .toolbar input[type="search"] { max-width: 260px; flex: 1; min-width: 180px; }
+    .toolbar select { max-width: 180px; width: auto; }
+    .view-toggle { display: flex; gap: 4px; margin-left: auto; }
+    .view-toggle button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .status-badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .status-Nova { background: var(--accent-soft); color: var(--accent); }
+    .status-Contactada { background: var(--warning-soft); color: #9A7200; }
+    .status-Em-conversa { background: #EEF2FF; color: #4F46E5; }
+    .status-Comprou { background: var(--success-soft); color: var(--success); }
+    .status-Aprovada { background: var(--success-soft); color: var(--success); }
+    .status-Recusada { background: var(--danger-soft); color: var(--danger); }
+    .status-Lista-de-espera { background: #F3F4F6; color: var(--text-muted); }
+
+    .list-table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: var(--shadow); }
+    .list-table th, .list-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+    .list-table th { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); background: var(--surface-soft); }
+    .list-table tr { cursor: pointer; }
+    .list-table tbody tr:hover { background: var(--accent-soft); }
+    .list-table tbody tr.stale-nova { background: var(--warm-soft); box-shadow: inset 3px 0 0 var(--warm); }
+    .list-table tbody tr.stale-nova:hover { background: #FBF0E4; }
+    .list-table .name { font-weight: 600; }
+    .list-table .muted { color: var(--text-muted); font-size: 12px; }
+    .list-actions { display: flex; gap: 6px; align-items: center; }
+
+    .kanban { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; align-items: start; }
+    .kanban-col { background: var(--surface-soft); border: 1px solid var(--border); border-radius: 10px; min-height: 120px; }
+    .kanban-col-head { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; color: var(--text); background: var(--surface); border-radius: 10px 10px 0 0; }
+    .kanban-col-body { padding: 8px; display: flex; flex-direction: column; gap: 8px; min-height: 80px; }
+    .kanban-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px; cursor: grab; font-size: 12px; box-shadow: var(--shadow); transition: box-shadow .15s, border-color .15s; }
+    .kanban-card:hover { box-shadow: 0 2px 8px rgba(44, 51, 69, .1); border-color: var(--border-strong); }
+    .kanban-card:active { cursor: grabbing; }
+    .kanban-card.stale-nova { background: var(--warm-soft); border-color: var(--warm-border); box-shadow: inset 3px 0 0 var(--warm), var(--shadow); }
+    .kanban-card .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; margin-bottom: 4px; }
+    .kanban-card .card-name { font-weight: 700; flex: 1; min-width: 0; line-height: 1.3; }
+    .kanban-card .card-meta { color: var(--text-muted); font-size: 11px; }
+    .kanban-card .stale-tag { display: inline-block; margin-top: 6px; font-size: 10px; font-weight: 700; color: #9A5B00; background: #FFE8C2; padding: 2px 6px; border-radius: 4px; }
+    .kanban-col-body.drag-over { background: var(--accent-soft); outline: 2px dashed var(--accent); outline-offset: -4px; }
+
+    .btn-wa-mini {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: #25D366;
+      color: #fff;
+      text-decoration: none;
+      transition: transform .12s, filter .12s;
+    }
+    .btn-wa-mini:hover { filter: brightness(1.06); transform: scale(1.05); }
+    .btn-wa-mini svg { width: 16px; height: 16px; fill: currentColor; }
+
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(44, 51, 69, .35); z-index: 50; display: none; }
+    .drawer-overlay.open { display: block; }
+    .drawer { position: fixed; top: 0; right: 0; width: min(480px, 100vw); height: 100vh; background: var(--surface); border-left: 1px solid var(--border); z-index: 60; transform: translateX(100%); transition: transform .2s ease; overflow-y: auto; padding: 20px; box-shadow: -4px 0 24px rgba(44, 51, 69, .08); }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 16px; }
+    .drawer-head h2 { font-size: 18px; line-height: 1.3; color: var(--text); }
+    .drawer-section { margin-bottom: 16px; }
+    .drawer-section h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 8px; }
+    .field-grid { display: grid; gap: 10px; }
+    .qa-item { margin-bottom: 10px; }
+    .qa-item .q { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+    .qa-item .a { font-size: 13px; color: var(--text); }
+    .drawer-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+    .toast { position: fixed; bottom: 20px; right: 20px; z-index: 100; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; opacity: 0; transform: translateY(8px); transition: all .2s; pointer-events: none; box-shadow: 0 4px 12px rgba(44, 51, 69, .15); }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.ok { background: var(--success); color: #fff; }
+    .toast.err { background: var(--danger); color: #fff; }
+
+    .empty { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+    .loading { text-align: center; padding: 40px; color: var(--text-muted); }
+
+    .toolbar.hidden { display: none; }
+    .pesquisa-nav { margin-bottom: 12px; }
+    .btn-back-kanban { display: inline-flex; align-items: center; gap: 6px; }
+    .pesquisa-split { display: grid; grid-template-columns: 1fr 2px 1fr; gap: 0; align-items: start; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; min-height: 400px; }
+    .pesquisa-divider { background: var(--border-strong); width: 2px; min-height: 100%; }
+    .pesquisa-col { padding: 16px 18px; min-width: 0; }
+    .pesquisa-col-head { margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+    .pesquisa-col-head h2 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+    .pesquisa-col-head p { font-size: 12px; color: var(--text-muted); }
+    .pesquisa-col.right .pesquisa-col-head h2 { color: var(--success); }
+    .chart-grid { display: flex; flex-direction: column; gap: 18px; }
+    .chart-block { background: var(--surface-soft); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+    .chart-block h3 { font-size: 12px; font-weight: 700; margin-bottom: 10px; color: var(--text); line-height: 1.35; }
+    .bar-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(80px, 42%); gap: 10px; align-items: center; margin-bottom: 7px; font-size: 11px; }
+    .bar-row:last-child { margin-bottom: 0; }
+    .bar-label { color: var(--text); line-height: 1.3; word-break: break-word; }
+    .bar-track { height: 8px; background: var(--border); border-radius: 999px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; background: var(--accent); min-width: 2px; transition: width .3s ease; }
+    .pesquisa-col.right .bar-fill { background: var(--success); }
+    .bar-pct { font-size: 10px; font-weight: 700; color: var(--text-muted); text-align: right; white-space: nowrap; }
+    .chart-empty { font-size: 11px; color: var(--text-muted); font-style: italic; }
+
+    @media (max-width: 900px) {
+      .pesquisa-split { grid-template-columns: 1fr; }
+      .pesquisa-divider { display: none; }
+      .pesquisa-col.right { border-top: 2px solid var(--border-strong); }
+    }
+    @media (max-width: 768px) {
+      .list-table { display: block; overflow-x: auto; }
+      .view-toggle { margin-left: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header class="header">
+    <div>
+      <h1>CRM Consultoria Ju</h1>
+      <small>Candidatas · formulário Google · <span id="lastSync">—</span></small>
+    </div>
+    <div class="header-actions">
+      <button class="secondary" id="btnRefresh">Atualizar</button>
+      <button class="ghost" id="btnConfig">Configuração</button>
+    </div>
+  </header>
+
+  <div class="config-panel" id="configPanel">
+    <button class="config-toggle" id="configToggle">▼ Configuração (Google Sheets + Apps Script)</button>
+    <div class="config-body">
+      <div class="config-row">
+        <div><label>API Key (Google Sheets)</label><input type="password" id="cfgApiKey" placeholder="AIzaSy..." /></div>
+        <div><label>Spreadsheet ID</label><input type="text" id="cfgSheetId" value="1tE9hSzTUJZfFtnUs-j3dNn9WhRjam1guqTVCgcMGjMI" /></div>
+        <div><label>Nome da aba</label><input type="text" id="cfgSheetName" value="Form Responses 1" /></div>
+      </div>
+      <div class="config-row">
+        <div><label>URL do Apps Script (Web App)</label><input type="url" id="cfgScriptUrl" value="https://script.google.com/macros/s/AKfycbxCNv4zVCg6YW1J8lKh4LkR94FCQwc8UB1tIOcLMhBTnkehfHUp7nRxu80ctwq1EUmu/exec" placeholder="https://script.google.com/macros/s/.../exec" /></div>
+        <div><label>PIN de escrita</label><input type="password" id="cfgPin" placeholder="PIN definido no Apps Script" /></div>
+      </div>
+      <div class="config-actions">
+        <button id="btnSaveConfig">Salvar configuração</button>
+        <button class="secondary" id="btnLoad">Carregar leads</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="toolbar" id="toolbar">
+    <div class="toolbar-filters">
+      <input type="search" id="searchInput" placeholder="Buscar nome, e-mail ou WhatsApp..." />
+      <select id="filterStatus"><option value="">Todos os status</option></select>
+      <select id="filterNotificado">
+        <option value="">Notificado: todos</option>
+        <option value="yes">Sim</option>
+        <option value="no">Não</option>
+      </select>
+    </div>
+    <div class="view-toggle">
+      <button class="secondary" data-view="list" id="btnViewList">Lista</button>
+      <button class="secondary active" data-view="kanban" id="btnViewKanban">Kanban</button>
+      <button class="secondary" data-view="pesquisa" id="btnViewPesquisa">Pesquisa</button>
+    </div>
+  </div>
+
+  <div id="mainContent"><div class="empty">Configure a API Key e clique em <strong>Carregar leads</strong>.</div></div>
+</div>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div>
+      <h2 id="drawerName">—</h2>
+      <small class="muted" id="drawerMeta">—</small>
+    </div>
+    <button class="secondary" id="btnCloseDrawer">✕</button>
+  </div>
+  <div id="drawerBody"></div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STATUSES = ['Nova', 'Contactada', 'Em conversa', 'Comprou', 'Recusada', 'Lista de espera'];
+const CONFIG_KEY = 'the_crm_consultoria_ju_config';
+
+const SURVEY_CHART_FIELDS = [
+  { key: 'situacao', label: 'Situação da casa hoje', type: 'single' },
+  { key: 'areas', label: 'Áreas que incomodam mais', type: 'multi' },
+  { key: 'tentou', label: 'Já tentou organizar antes?', type: 'single' },
+  { key: 'impede', label: 'O que mais impede de organizar', type: 'single' },
+  { key: 'moraCom', label: 'Quem mora com você', type: 'single' },
+  { key: 'disponibilidade', label: 'Disponibilidade para encontros', type: 'single' },
+  { key: 'comprometimento', label: 'Comprometimento com tarefas', type: 'single' }
+];
+
+const FORM_FIELDS = [
+  { key: 'timestamp', label: 'Data da candidatura' },
+  { key: 'nome', label: 'Nome completo' },
+  { key: 'whatsapp', label: 'WhatsApp' },
+  { key: 'email', label: 'E-mail' },
+  { key: 'situacao', label: 'Situação da casa' },
+  { key: 'areas', label: 'Áreas que incomodam' },
+  { key: 'tentou', label: 'Já tentou organizar antes?' },
+  { key: 'impede', label: 'O que impede de organizar' },
+  { key: 'moraCom', label: 'Quem mora com você' },
+  { key: 'disponibilidade', label: 'Disponibilidade para encontros' },
+  { key: 'expectativa', label: 'Expectativa com a consultoria' },
+  { key: 'comprometimento', label: 'Comprometimento com tarefas' },
+  { key: 'notificado', label: 'Notificado' }
+];
+
+let leads = [];
+let filtered = [];
+let currentView = 'kanban';
+let selectedLead = null;
+let dragLeadRow = null;
+
+function getConfig() {
+  try { return JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}'); }
+  catch { return {}; }
+}
+
+function saveConfigFromUI() {
+  const cfg = {
+    apiKey: document.getElementById('cfgApiKey').value.trim(),
+    sheetId: document.getElementById('cfgSheetId').value.trim(),
+    sheetName: document.getElementById('cfgSheetName').value.trim(),
+    scriptUrl: document.getElementById('cfgScriptUrl').value.trim(),
+    pin: document.getElementById('cfgPin').value.trim()
+  };
+  localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
+  toast('Configuração salva', 'ok');
+}
+
+function loadConfigToUI() {
+  const cfg = getConfig();
+  if (cfg.apiKey) document.getElementById('cfgApiKey').value = cfg.apiKey;
+  if (cfg.sheetId) document.getElementById('cfgSheetId').value = cfg.sheetId;
+  if (cfg.sheetName) document.getElementById('cfgSheetName').value = cfg.sheetName;
+  if (cfg.scriptUrl) document.getElementById('cfgScriptUrl').value = cfg.scriptUrl;
+  if (cfg.pin) document.getElementById('cfgPin').value = cfg.pin;
+}
+
+function toast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + (type || 'ok');
+  setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+function normalizeStatus(s) {
+  const v = String(s || '').trim();
+  if (!v) return 'Nova';
+  if (v === 'Aprovada') return 'Comprou';
+  return v;
+}
+
+function statusClass(s) {
+  return 'status-' + String(normalizeStatus(s) || 'Nova').replace(/\s+/g, '-');
+}
+
+function isComprou(lead) {
+  return normalizeStatus(lead.status) === 'Comprou';
+}
+
+function parseTimestamp(v) {
+  if (!v) return null;
+  const s = String(v).trim();
+  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return new Date(+m[3], +m[1] - 1, +m[2]);
+  const d = new Date(s);
+  return isNaN(d) ? null : d;
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+function whatsappUrl(raw) {
+  const digits = String(raw || '').replace(/\D/g, '');
+  if (!digits) return null;
+  const phone = digits.startsWith('55') ? digits : '55' + digits;
+  return 'https://wa.me/' + phone;
+}
+
+const WA_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>';
+
+function waMiniButton(lead) {
+  const url = whatsappUrl(lead.whatsapp);
+  if (!url) return '';
+  return `<a class="btn-wa-mini" href="${url}" target="_blank" rel="noopener" title="WhatsApp ${esc(lead.nome)}" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()">${WA_ICON}</a>`;
+}
+
+function isStaleNova(lead) {
+  if (lead.status !== 'Nova' || !lead.date) return false;
+  const ms = Date.now() - lead.date.getTime();
+  return ms > 24 * 60 * 60 * 1000;
+}
+
+function staleNovaTag(lead) {
+  if (!isStaleNova(lead)) return '';
+  const days = Math.floor((Date.now() - lead.date.getTime()) / (24 * 60 * 60 * 1000));
+  return `<span class="stale-tag">Sem contacto · ${days}d</span>`;
+}
+
+function normalizeHeader(h) {
+  return String(h || '').trim().toLowerCase();
+}
+
+function mapRow(row, sheetRow) {
+  const h = row._headers || [];
+  function col(matchers) {
+    for (let i = 0; i < h.length; i++) {
+      const nh = normalizeHeader(h[i]);
+      if (matchers.some(m => nh.includes(m))) return row._cells[i] ?? '';
+    }
+    return '';
+  }
+  const statusRaw = col(['status crm']) || (row._cells[13] ?? '');
+  return {
+    row: sheetRow,
+    timestamp: col(['timestamp']) || row._cells[0] || '',
+    date: parseTimestamp(col(['timestamp']) || row._cells[0]),
+    nome: col(['nome completo', 'seu nome']) || row._cells[1] || '',
+    whatsapp: col(['whatsapp']) || row._cells[2] || '',
+    email: col(['e-mail', 'email']) || row._cells[3] || '',
+    situacao: col(['situação da casa', 'situacao da casa']) || row._cells[4] || '',
+    areas: col(['áreas da casa', 'areas da casa']) || row._cells[5] || '',
+    tentou: col(['tentou organizar']) || row._cells[6] || '',
+    impede: col(['impede de organizar']) || row._cells[7] || '',
+    moraCom: col(['mora com']) || row._cells[8] || '',
+    disponibilidade: col(['disponibilidade']) || row._cells[9] || '',
+    expectativa: col(['espera que mude']) || row._cells[10] || '',
+    comprometimento: col(['processo']) || row._cells[11] || '',
+    notificado: col(['notificado']) || row._cells[12] || '',
+    status: normalizeStatus(statusRaw),
+    notas: col(['notas']) || row._cells[14] || '',
+    proximoPasso: col(['próximo passo', 'proximo passo']) || row._cells[15] || '',
+    atualizadoEm: col(['atualizado em']) || row._cells[16] || ''
+  };
+}
+
+async function fetchSheet() {
+  const cfg = getConfig();
+  if (!cfg.apiKey || !cfg.sheetId || !cfg.sheetName) {
+    throw new Error('Configure API Key, Spreadsheet ID e nome da aba.');
+  }
+  const range = encodeURIComponent(cfg.sheetName);
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${range}?key=${cfg.apiKey}&valueRenderOption=FORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING`;
+  const resp = await fetch(url);
+  if (!resp.ok) {
+    const body = await resp.text();
+    throw new Error(`Sheets API ${resp.status}: ${body.slice(0, 180)}`);
+  }
+  const data = await resp.json();
+  const rows = data.values || [];
+  if (rows.length < 2) return [];
+  const headers = rows[0];
+  return rows.slice(1)
+    .map((cells, i) => {
+      const obj = { _headers: headers, _cells: cells };
+      return mapRow(obj, i + 2);
+    })
+    .filter(l => l.nome || l.email || l.whatsapp)
+    .sort((a, b) => (b.date?.getTime() || 0) - (a.date?.getTime() || 0));
+}
+
+async function saveLead(row, patch) {
+  const cfg = getConfig();
+  if (!cfg.scriptUrl || !cfg.pin) throw new Error('Configure URL do Apps Script e PIN.');
+  const payload = { pin: cfg.pin, row, ...patch };
+  const resp = await fetch(cfg.scriptUrl, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  });
+  const text = await resp.text();
+  let data;
+  try { data = JSON.parse(text); } catch { throw new Error('Resposta inválida do Apps Script'); }
+  if (!data.ok) throw new Error(data.error || 'Erro ao salvar');
+  return data;
+}
+
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const st = document.getElementById('filterStatus').value;
+  const not = document.getElementById('filterNotificado').value;
+  filtered = leads.filter(l => {
+    if (st && l.status !== st) return false;
+    if (not === 'yes' && !/^yes|sim/i.test(String(l.notificado))) return false;
+    if (not === 'no' && /^yes|sim/i.test(String(l.notificado))) return false;
+    if (!q) return true;
+    const hay = [l.nome, l.email, l.whatsapp].join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+}
+
+function renderKpis() {
+  const now = new Date();
+  const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 7);
+  const novas = leads.filter(l => l.status === 'Nova').length;
+  const semana = leads.filter(l => l.date && l.date >= weekAgo).length;
+  const comprou = leads.filter(isComprou).length;
+  const staleCount = leads.filter(isStaleNova).length;
+  document.getElementById('kpis').innerHTML = [
+    { label: 'Total', val: leads.length },
+    { label: 'Novas', val: novas },
+    { label: 'Sem contacto +1d', val: staleCount, warn: staleCount > 0 },
+    { label: 'Esta semana', val: semana },
+    { label: 'Comprou', val: comprou },
+    { label: 'Em conversa', val: leads.filter(l => l.status === 'Em conversa').length }
+  ].map(k => `<div class="kpi${k.warn ? ' kpi-warn' : ''}"><div class="label">${k.label}</div><div class="val">${k.val}</div></div>`).join('');
+}
+
+function splitMultiValue(raw) {
+  return String(raw || '')
+    .split(/[,;]|\s+·\s+/)
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+function aggregateField(dataset, field) {
+  const counts = {};
+  let total = 0;
+  dataset.forEach(lead => {
+    const raw = lead[field.key];
+    if (!raw) return;
+    const values = field.type === 'multi' ? splitMultiValue(raw) : [String(raw).trim()];
+    values.forEach(v => {
+      if (!v) return;
+      counts[v] = (counts[v] || 0) + 1;
+      total++;
+    });
+  });
+  const entries = Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8);
+  return { entries, total, respondents: dataset.filter(l => l[field.key]).length };
+}
+
+function renderChartBlock(field, agg) {
+  if (!agg.entries.length) {
+    return `<div class="chart-block"><h3>${esc(field.label)}</h3><div class="chart-empty">Sem respostas</div></div>`;
+  }
+  const denom = field.type === 'multi' ? agg.total : agg.respondents;
+  const rows = agg.entries.map(([label, count]) => {
+    const pct = denom ? Math.round((count / denom) * 100) : 0;
+    const short = label.length > 52 ? label.slice(0, 50) + '…' : label;
+    return `
+      <div class="bar-row">
+        <div class="bar-label" title="${esc(label)}">${esc(short)} <span class="muted">(${count})</span></div>
+        <div>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+          <div class="bar-pct">${pct}%</div>
+        </div>
+      </div>`;
+  }).join('');
+  const sub = field.type === 'multi'
+    ? `${agg.respondents} candidatas · ${agg.total} marcações`
+    : `${agg.respondents} respostas`;
+  return `<div class="chart-block"><h3>${esc(field.label)}</h3><div class="muted" style="font-size:10px;margin:-6px 0 8px">${sub}</div>${rows}</div>`;
+}
+
+function renderPesquisaColumn(title, subtitle, dataset, sideClass) {
+  const charts = SURVEY_CHART_FIELDS.map(f => renderChartBlock(f, aggregateField(dataset, f))).join('');
+  return `
+    <div class="pesquisa-col ${sideClass}">
+      <div class="pesquisa-col-head">
+        <h2>${esc(title)}</h2>
+        <p>${esc(subtitle)} · <strong>${dataset.length}</strong> candidata${dataset.length === 1 ? '' : 's'}</p>
+      </div>
+      <div class="chart-grid">${charts}</div>
+    </div>`;
+}
+
+function renderPesquisa() {
+  if (!leads.length) {
+    document.getElementById('mainContent').innerHTML = '<div class="empty">Carregue os leads para ver a pesquisa.</div>';
+    return;
+  }
+  const comprouLeads = leads.filter(isComprou);
+  document.getElementById('mainContent').innerHTML = `
+    <div class="pesquisa-nav">
+      <button type="button" class="secondary btn-back-kanban" id="btnBackKanban">← Voltar ao Kanban</button>
+    </div>
+    <div class="pesquisa-split">
+      ${renderPesquisaColumn('Todas as leads', 'Respostas do formulário', leads, 'left')}
+      <div class="pesquisa-divider" aria-hidden="true"></div>
+      ${renderPesquisaColumn('Comprou', 'Somente quem fechou consultoria', comprouLeads, 'right')}
+    </div>`;
+  document.getElementById('btnBackKanban').addEventListener('click', () => switchView('kanban'));
+}
+
+function switchView(view) {
+  currentView = view;
+  document.querySelectorAll('.view-toggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === view);
+  });
+  render();
+}
+
+function renderList() {
+  if (!filtered.length) {
+    document.getElementById('mainContent').innerHTML = '<div class="empty">Nenhuma candidata encontrada.</div>';
+    return;
+  }
+  const rows = filtered.map(l => `
+    <tr data-row="${l.row}" class="${isStaleNova(l) ? 'stale-nova' : ''}">
+      <td><span class="name">${esc(l.nome)}</span><div class="muted">${formatDate(l.date)}</div></td>
+      <td><span class="status-badge ${statusClass(l.status)}">${esc(l.status)}</span></td>
+      <td class="muted">${esc(l.disponibilidade).slice(0, 40)}${l.disponibilidade.length > 40 ? '…' : ''}</td>
+      <td class="muted">${esc(l.comprometimento).slice(0, 36)}${l.comprometimento.length > 36 ? '…' : ''}</td>
+      <td>${/^yes|sim/i.test(l.notificado) ? '✓' : '—'}</td>
+      <td class="list-actions">${waMiniButton(l)}</td>
+    </tr>
+  `).join('');
+  document.getElementById('mainContent').innerHTML = `
+    <table class="list-table">
+      <thead><tr><th>Candidata</th><th>Status</th><th>Disponibilidade</th><th>Comprometimento</th><th>Notif.</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  document.querySelectorAll('.list-table tbody tr').forEach(tr => {
+    tr.addEventListener('click', () => openDrawer(+tr.dataset.row));
+  });
+}
+
+function renderKanban() {
+  const cols = STATUSES.map(status => {
+    const items = filtered.filter(l => l.status === status);
+    const cards = items.map(l => `
+      <div class="kanban-card${isStaleNova(l) ? ' stale-nova' : ''}" draggable="true" data-row="${l.row}">
+        <div class="card-top">
+          <div class="card-name">${esc(l.nome)}</div>
+          ${waMiniButton(l)}
+        </div>
+        <div class="card-meta">${formatDate(l.date)} · ${esc(l.disponibilidade).slice(0, 28)}</div>
+        ${staleNovaTag(l)}
+      </div>
+    `).join('');
+    return `
+      <div class="kanban-col" data-status="${esc(status)}">
+        <div class="kanban-col-head"><span>${status}</span><span>${items.length}</span></div>
+        <div class="kanban-col-body">${cards || '<div class="muted" style="font-size:11px;padding:4px">Vazio</div>'}</div>
+      </div>`;
+  }).join('');
+  document.getElementById('mainContent').innerHTML = `<div class="kanban">${cols}</div>`;
+
+  document.querySelectorAll('.kanban-card').forEach(card => {
+    card.addEventListener('dragstart', e => { dragLeadRow = +card.dataset.row; e.dataTransfer.effectAllowed = 'move'; });
+    card.addEventListener('click', () => openDrawer(+card.dataset.row));
+  });
+  document.querySelectorAll('.kanban-col-body').forEach(body => {
+    body.addEventListener('dragover', e => { e.preventDefault(); body.classList.add('drag-over'); });
+    body.addEventListener('dragleave', () => body.classList.remove('drag-over'));
+    body.addEventListener('drop', async e => {
+      e.preventDefault();
+      body.classList.remove('drag-over');
+      const status = body.closest('.kanban-col').dataset.status;
+      if (!dragLeadRow || !status) return;
+      await updateLeadStatus(dragLeadRow, status);
+      dragLeadRow = null;
+    });
+  });
+}
+
+function render() {
+  const toolbar = document.getElementById('toolbar');
+  toolbar.classList.toggle('filters-hidden', currentView === 'pesquisa');
+  if (currentView === 'pesquisa') {
+    renderKpis();
+    renderPesquisa();
+    return;
+  }
+  applyFilters();
+  renderKpis();
+  if (currentView === 'kanban') renderKanban();
+  else renderList();
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function updateLeadStatus(row, status) {
+  const lead = leads.find(l => l.row === row);
+  if (!lead) return;
+  const prev = lead.status;
+  lead.status = status;
+  render();
+  try {
+    await saveLead(row, { status });
+    lead.atualizadoEm = new Date().toLocaleString('pt-BR');
+    toast('Status atualizado', 'ok');
+  } catch (err) {
+    lead.status = prev;
+    render();
+    toast(err.message, 'err');
+  }
+}
+
+function openDrawer(row) {
+  selectedLead = leads.find(l => l.row === row);
+  if (!selectedLead) return;
+  const l = selectedLead;
+  document.getElementById('drawerName').textContent = l.nome || 'Sem nome';
+  document.getElementById('drawerMeta').textContent = [l.email, l.whatsapp].filter(Boolean).join(' · ');
+  const wa = whatsappUrl(l.whatsapp);
+  const qa = FORM_FIELDS.filter(f => !['timestamp','nome','whatsapp','email'].includes(f.key))
+    .map(f => `<div class="qa-item"><div class="q">${esc(f.label)}</div><div class="a">${esc(l[f.key]) || '—'}</div></div>`).join('');
+  document.getElementById('drawerBody').innerHTML = `
+    <div class="drawer-section">
+      <span class="status-badge ${statusClass(l.status)}">${esc(l.status)}</span>
+      <span class="muted" style="font-size:12px;margin-left:8px">${formatDate(l.date)}</span>
+    </div>
+    <div class="drawer-section field-grid">
+      <div><label>Status CRM</label>
+        <select id="editStatus">${STATUSES.map(s => `<option value="${esc(s)}"${s===normalizeStatus(l.status)?' selected':''}>${esc(s)}</option>`).join('')}</select>
+      </div>
+      <div><label>Notas</label><textarea id="editNotas">${esc(l.notas)}</textarea></div>
+      <div><label>Próximo passo</label><input type="text" id="editPasso" value="${esc(l.proximoPasso)}" /></div>
+    </div>
+    <div class="drawer-section"><h3>Respostas do formulário</h3>${qa}</div>
+    <div class="drawer-actions">
+      <button id="btnSaveLead">Salvar</button>
+      ${wa ? `<a href="${wa}" target="_blank" rel="noopener"><button class="secondary" type="button">WhatsApp</button></a>` : ''}
+      <button class="secondary" id="btnCopyEmail">Copiar e-mail</button>
+      <button class="ghost" id="btnMarkContactada">Marcar contactada</button>
+    </div>`;
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('btnSaveLead').onclick = () => saveDrawer();
+  document.getElementById('btnCopyEmail').onclick = () => { navigator.clipboard.writeText(l.email); toast('E-mail copiado', 'ok'); };
+  document.getElementById('btnMarkContactada').onclick = () => { document.getElementById('editStatus').value = 'Contactada'; saveDrawer(); };
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+  selectedLead = null;
+}
+
+async function saveDrawer() {
+  if (!selectedLead) return;
+  const status = document.getElementById('editStatus').value;
+  const notas = document.getElementById('editNotas').value;
+  const proximoPasso = document.getElementById('editPasso').value;
+  try {
+    await saveLead(selectedLead.row, { status, notas, proximoPasso });
+    Object.assign(selectedLead, { status, notas, proximoPasso, atualizadoEm: new Date().toLocaleString('pt-BR') });
+    render();
+    toast('Salvo na planilha', 'ok');
+  } catch (err) {
+    toast(err.message, 'err');
+  }
+}
+
+async function loadLeads() {
+  document.getElementById('mainContent').innerHTML = '<div class="loading">Carregando...</div>';
+  try {
+    leads = await fetchSheet();
+    document.getElementById('lastSync').textContent = 'Atualizado ' + new Date().toLocaleString('pt-BR');
+    render();
+    toast(`${leads.length} leads carregados`, 'ok');
+  } catch (err) {
+    document.getElementById('mainContent').innerHTML = `<div class="empty">${esc(err.message)}</div>`;
+    toast(err.message, 'err');
+  }
+}
+
+function initStatusFilter() {
+  const sel = document.getElementById('filterStatus');
+  STATUSES.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s; o.textContent = s;
+    sel.appendChild(o);
+  });
+}
+
+document.getElementById('btnSaveConfig').addEventListener('click', saveConfigFromUI);
+document.getElementById('btnLoad').addEventListener('click', loadLeads);
+document.getElementById('btnRefresh').addEventListener('click', loadLeads);
+document.getElementById('btnConfig').addEventListener('click', () => {
+  document.getElementById('configPanel').classList.toggle('open');
+});
+document.getElementById('configToggle').addEventListener('click', () => {
+  document.getElementById('configPanel').classList.toggle('open');
+});
+document.getElementById('searchInput').addEventListener('input', render);
+document.getElementById('filterStatus').addEventListener('change', render);
+document.getElementById('filterNotificado').addEventListener('change', render);
+document.getElementById('btnCloseDrawer').addEventListener('click', closeDrawer);
+document.getElementById('drawerOverlay').addEventListener('click', closeDrawer);
+
+document.querySelectorAll('.view-toggle button').forEach(btn => {
+  btn.addEventListener('click', () => switchView(btn.dataset.view));
+});
+
+initStatusFilter();
+loadConfigToUI();
+</script>
+</body>
+</html>
