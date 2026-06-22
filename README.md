@@ -61,7 +61,7 @@ Abra `http://localhost:8080/index.html`.
 
 ## Status disponíveis
 
-Nova · Contactada · Em conversa · Aprovada · Recusada · Lista de espera
+Nova · Contactada · Em conversa · Comprou · Recusada · Lista de espera
 
 ## Segurança
 
