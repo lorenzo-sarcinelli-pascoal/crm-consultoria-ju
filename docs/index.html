@@ -66,6 +66,8 @@
     .kpi-warn .val { color: #9A5B00; }
 
     .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); }
+    .toolbar-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; flex: 1; min-width: 0; }
+    .toolbar.filters-hidden .toolbar-filters { display: none; }
     .toolbar input[type="search"] { max-width: 260px; flex: 1; min-width: 180px; }
     .toolbar select { max-width: 180px; width: auto; }
     .view-toggle { display: flex; gap: 4px; margin-left: auto; }
@@ -144,6 +146,8 @@
     .loading { text-align: center; padding: 40px; color: var(--text-muted); }
 
     .toolbar.hidden { display: none; }
+    .pesquisa-nav { margin-bottom: 12px; }
+    .btn-back-kanban { display: inline-flex; align-items: center; gap: 6px; }
     .pesquisa-split { display: grid; grid-template-columns: 1fr 2px 1fr; gap: 0; align-items: start; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; min-height: 400px; }
     .pesquisa-divider { background: var(--border-strong); width: 2px; min-height: 100%; }
     .pesquisa-col { padding: 16px 18px; min-width: 0; }
@@ -209,14 +213,16 @@
 
   <div class="kpis" id="kpis"></div>
 
-  <div class="toolbar">
-    <input type="search" id="searchInput" placeholder="Buscar nome, e-mail ou WhatsApp..." />
-    <select id="filterStatus"><option value="">Todos os status</option></select>
-    <select id="filterNotificado">
-      <option value="">Notificado: todos</option>
-      <option value="yes">Sim</option>
-      <option value="no">Não</option>
-    </select>
+  <div class="toolbar" id="toolbar">
+    <div class="toolbar-filters">
+      <input type="search" id="searchInput" placeholder="Buscar nome, e-mail ou WhatsApp..." />
+      <select id="filterStatus"><option value="">Todos os status</option></select>
+      <select id="filterNotificado">
+        <option value="">Notificado: todos</option>
+        <option value="yes">Sim</option>
+        <option value="no">Não</option>
+      </select>
+    </div>
     <div class="view-toggle">
       <button class="secondary" data-view="list" id="btnViewList">Lista</button>
       <button class="secondary active" data-view="kanban" id="btnViewKanban">Kanban</button>
@@ -544,11 +550,23 @@ function renderPesquisa() {
   }
   const comprouLeads = leads.filter(isComprou);
   document.getElementById('mainContent').innerHTML = `
+    <div class="pesquisa-nav">
+      <button type="button" class="secondary btn-back-kanban" id="btnBackKanban">← Voltar ao Kanban</button>
+    </div>
     <div class="pesquisa-split">
       ${renderPesquisaColumn('Todas as leads', 'Respostas do formulário', leads, 'left')}
       <div class="pesquisa-divider" aria-hidden="true"></div>
       ${renderPesquisaColumn('Comprou', 'Somente quem fechou consultoria', comprouLeads, 'right')}
     </div>`;
+  document.getElementById('btnBackKanban').addEventListener('click', () => switchView('kanban'));
+}
+
+function switchView(view) {
+  currentView = view;
+  document.querySelectorAll('.view-toggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === view);
+  });
+  render();
 }
 
 function renderList() {
@@ -616,14 +634,13 @@ function renderKanban() {
 }
 
 function render() {
-  const toolbar = document.querySelector('.toolbar');
+  const toolbar = document.getElementById('toolbar');
+  toolbar.classList.toggle('filters-hidden', currentView === 'pesquisa');
   if (currentView === 'pesquisa') {
-    toolbar.classList.add('hidden');
     renderKpis();
     renderPesquisa();
     return;
   }
-  toolbar.classList.remove('hidden');
   applyFilters();
   renderKpis();
   if (currentView === 'kanban') renderKanban();
@@ -745,12 +762,7 @@ document.getElementById('btnCloseDrawer').addEventListener('click', closeDrawer)
 document.getElementById('drawerOverlay').addEventListener('click', closeDrawer);
 
 document.querySelectorAll('.view-toggle button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentView = btn.dataset.view;
-    render();
-  });
+  btn.addEventListener('click', () => switchView(btn.dataset.view));
 });
 
 initStatusFilter();
